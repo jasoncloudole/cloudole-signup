@@ -8,6 +8,7 @@ import next from "next";
 import Router from "koa-router";
 import session from "koa-session";
 
+
 dotenv.config();
 const port = parseInt(process.env.PORT, 10) || 8081;
 const dev = process.env.NODE_ENV !== "production";
@@ -37,8 +38,10 @@ app.prepare().then(() => {
 
       async afterAuth(ctx) {
         // Access token and shop available in ctx.state.shopify
-        const { shop } = ctx.state.shopify;
-
+        const { shop, accessToken } = ctx.state.shopify;
+        ctx.cookies.set("shopName", shop);
+        ctx.cookies.set("accessToken", accessToken);
+        console.log(shop, accessToken)
         // Redirect to app with shop parameter upon auth
         ctx.redirect(`/?shop=${shop}`);
       },
