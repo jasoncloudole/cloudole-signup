@@ -1,30 +1,71 @@
-import { EmptyState, Layout, Page } from '@shopify/polaris';
-import { CookiesProvider } from 'react-cookie';
-import { withCookies, Cookies } from 'react-cookie';
-import Router from 'next/router';
-const Index = () => (
-  <CookiesProvider>
-  <Page>
-    <Layout>
-      <EmptyState
-        heading="Discount your products temporarily"
-        action={{
-          content: 'Select products',
-          onAction: () => test(),
-        }}
-      >
-        <p>Select products to change their price temporarily.</p>
-      </EmptyState>
-    </Layout>
-  </Page>
-  </CookiesProvider>
-);
+import { Button, Form, FormLayout, Page, TextField } from "@shopify/polaris";
+import { CookiesProvider, withCookies } from "react-cookie";
 
-const test = () => {
-  const cookies = new Cookies();
-  console.log(cookies.getAll());
-  console.log('test');
-  Router.push('/syncData')
+import React from "react";
+import axios from "axios";
+
+axios.defaults.baseURL =
+  "https://us-central1-cloudole-2f23d.cloudfunctions.net/api";
+
+function Index(props) {
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
+
+  const handleSubmit = () => {
+    axios
+      .post("/signup", {
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
+        shopName: props.shop,
+      })
+      .then(() => {
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+      });
+  };
+
+  const handleEmailChange = React.useCallback((value) => setEmail(value), []);
+  const handlePasswordChange = React.useCallback(
+    (value) => setPassword(value),
+    []
+  );
+  const handleConfirmPasswordChange = React.useCallback(
+    (value) => setConfirmPassword(value),
+    []
+  );
+
+  return (
+    <CookiesProvider>
+      <Page narrowWidth title="Sign up to Cloudole">
+        <Form onSubmit={handleSubmit}>
+          <FormLayout>
+            <TextField
+              value={email}
+              onChange={handleEmailChange}
+              label="Email"
+              type="email"
+            />
+            <TextField
+              value={password}
+              onChange={handlePasswordChange}
+              label="Password"
+              type="password"
+            />
+            <TextField
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
+              label="Confirm Password"
+              type="password"
+            />
+            <Button submit>Submit</Button>
+          </FormLayout>
+        </Form>
+      </Page>
+    </CookiesProvider>
+  );
 }
 
-export default Index;
+export default withCookies(Index);

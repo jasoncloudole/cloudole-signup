@@ -1,13 +1,18 @@
 import "@babel/polyfill";
-import dotenv from "dotenv";
 import "isomorphic-fetch";
+
 import createShopifyAuth, { verifyRequest } from "@shopify/koa-shopify-auth";
 import graphQLProxy, { ApiVersion } from "@shopify/koa-shopify-graphql-proxy";
+
 import Koa from "koa";
-import next from "next";
 import Router from "koa-router";
+import axios from "axios";
+import dotenv from "dotenv";
+import next from "next";
 import session from "koa-session";
 
+axios.defaults.baseURL =
+  "https://us-central1-cloudole-2f23d.cloudfunctions.net/api";
 
 dotenv.config();
 const port = parseInt(process.env.PORT, 10) || 8081;
@@ -41,7 +46,16 @@ app.prepare().then(() => {
         const { shop, accessToken } = ctx.state.shopify;
         ctx.cookies.set("shopName", shop);
         ctx.cookies.set("accessToken", accessToken);
-        console.log(shop, accessToken)
+        console.log(shop, accessToken);
+        axios
+          .post("/storeToken", {
+            shopName: shop,
+            shopToken: accessToken,
+          })
+          .then(() => {})
+          .catch((err) => {
+            console.log(err);
+          });
         // Redirect to app with shop parameter upon auth
         ctx.redirect(`/?shop=${shop}`);
       },

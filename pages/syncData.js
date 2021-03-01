@@ -1,5 +1,6 @@
-import { EmptyState, Layout, Page } from '@shopify/polaris';
-import { CookiesProvider } from 'react-cookie';
+import { EmptyState, Layout, Page } from "@shopify/polaris";
+
+import { CookiesProvider } from "react-cookie";
 
 const syncData = () => (
   <CookiesProvider>
@@ -8,7 +9,7 @@ const syncData = () => (
         <EmptyState
           heading="Sync"
           action={{
-            content: 'Select products',
+            content: "Select products",
             onAction: () => test(),
           }}
         >
@@ -19,8 +20,6 @@ const syncData = () => (
   </CookiesProvider>
 );
 
-const test = () => {
-
-}
+const test = () => {};
 
 export default syncData;
